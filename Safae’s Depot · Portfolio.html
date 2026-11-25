@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<title>Safae’s Depot · Portfolio</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600..800&family=Hanken+Grotesk:wght@400..800&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
+<style>
+@property --w{syntax:'<length>';inherits:true;initial-value:200px}
+@property --span{syntax:'<length>';inherits:true;initial-value:0px}
+@property --fl{syntax:'<length>';inherits:true;initial-value:0px}
+:root{--disp:'Bricolage Grotesque','Arial Black',sans-serif;--body:'Hanken Grotesk',system-ui,Arial,sans-serif;--serif:'Instrument Serif',Georgia,serif;--e:cubic-bezier(.55,0,.25,1);--rib:repeating-linear-gradient(90deg,rgba(255,255,255,.24) 0 3px,rgba(0,0,0,.14) 3px 7px,transparent 7px 16px);padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+html{background:#1f93f2}
+body{margin:0;height:100vh;height:100svh;display:flex;flex-direction:column;overflow-x:hidden;background:linear-gradient(180deg,#0f74e0 0%,#1f93f2 55%,#46b8ff 100%);color:#fff;font-family:var(--body)}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background-image:linear-gradient(rgba(255,255,255,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.08) 1px,transparent 1px);background-size:44px 44px}
+nav{position:relative;z-index:20;height:72px;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:0 48px}
+.logo{width:112px;font:800 30px/1 var(--disp);letter-spacing:-.02em;color:#fff;text-decoration:none}
+.links{position:absolute;left:50%;transform:translateX(-50%);display:flex;gap:6px}
+.links button{all:unset;cursor:pointer;font:700 15px/1 var(--body);color:#e6f3ff;padding:10px 14px;border-radius:99px}
+.links button:hover{background:rgba(255,255,255,.16)}
+.links button:focus-visible,.talk:focus-visible{outline:2px solid #ffd23f;outline-offset:3px}
+.talk{font:700 16px/1 var(--disp);color:#fff;text-decoration:none;padding:12px 18px;border-radius:99px;background:rgba(255,255,255,.18)}
+#stage{position:relative;flex:1;min-height:0;overflow:hidden;perspective:1100px;perspective-origin:50% 35%;--bw:clamp(200px,20vw,310px);--k:1.95}
+.word{position:absolute;left:50%;top:58%;transform:translate(-50%,-50%);font:700 clamp(90px,19vw,330px)/1 var(--disp);letter-spacing:-.04em;color:#fff;white-space:nowrap;z-index:1;pointer-events:none;user-select:none}
+.depot{position:absolute;left:48px;top:20px;z-index:3;font:700 11px/1 var(--body);letter-spacing:.2em;color:#d7ecff}
+.depot b{color:#ffd23f;font-weight:700}
+.rail{position:absolute;left:0;right:0;top:56px;height:16px;z-index:5;background:linear-gradient(#fff,#cfd9e5);box-shadow:0 6px 14px rgba(0,30,90,.35)}
+.rail::after{content:'';position:absolute;left:0;right:0;top:50%;border-top:1px dashed rgba(255,255,255,.55)}
+.pill{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);z-index:40;pointer-events:none;white-space:nowrap;padding:9px 16px;border-radius:99px;background:rgba(255,255,255,.18);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.35);font:700 11px/1 var(--body);letter-spacing:.2em}
+
+/* claw */
+.cl{position:absolute;z-index:60;transition:left var(--dur,.8s) var(--e),top var(--dur,.8s) var(--e),height var(--dur,.8s) var(--e),--span var(--dur,.8s) var(--e),--fl var(--dur,.8s) var(--e)}
+#carriage{top:47px;width:68px;height:34px;margin-left:-34px;border-radius:12px;background:linear-gradient(#fff,#e7edf5);box-shadow:0 6px 14px rgba(0,30,90,.35)}
+#carriage::before,#carriage::after{content:'';position:absolute;bottom:-4px;width:8px;height:8px;border-radius:50%;background:#9fb3c8}
+#carriage::before{left:10px}
+#carriage::after{right:10px}
+#rod{top:81px;width:8px;margin-left:-4px;background:linear-gradient(90deg,#9aa6b4,#fff 50%,#9aa6b4)}
+#grip{width:72px;height:34px;margin-left:-36px;border-radius:14px;background:linear-gradient(#fff,#e6edf5);box-shadow:0 6px 14px rgba(0,30,90,.3)}
+#fing{width:0;height:0;--reach:calc(var(--span) / 2 + 8px)}
+.fl,.fr{position:absolute;left:0;top:0;width:0;height:0;transition:transform .5s cubic-bezier(.34,1.56,.64,1)}
+.fl{transform:rotate(var(--ao,0deg))}
+.fr{transform:rotate(calc(var(--ao,0deg) * -1))}
+.arm,.fin{position:absolute;background:#fff;box-shadow:0 2px 5px rgba(0,30,90,.3)}
+.arm{top:0;height:8px;width:var(--reach);border-radius:4px}
+.fin{top:0;width:8px;height:var(--fl);border-radius:4px}
+.fl .arm,.fl .fin{left:calc(var(--reach) * -1)}
+.fr .arm{left:0}
+.fr .fin{left:calc(var(--reach) - 8px)}
+
+/* containers */
+.box{position:absolute;width:var(--w);height:var(--h);transform-style:preserve-3d;--w:var(--bw);--h:calc(var(--w) * .43);--d:calc(var(--w) * .4);--lf:.28;--dur:.8s;transform:translate(-50%,calc(-50% + var(--lift,0px))) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) rotateZ(var(--rz,0deg));transition:left var(--dur) var(--e),top var(--dur) var(--e),transform var(--dur) var(--e),--w var(--dur) var(--e)}
+.box:not(.held):hover,.box:not(.held):has(.hit:focus-visible){--lift:-10px}
+.box.held{--w:calc(var(--bw) * var(--k));--lift:0px}
+.fc{position:absolute;background:var(--rib),var(--c);border:1px solid rgba(0,0,0,.22);backface-visibility:hidden}
+.bk{left:0;top:0;width:var(--w);height:var(--h);transform:rotateY(180deg) translateZ(calc(var(--d) / 2))}
+.lf,.rt{width:var(--d);height:var(--h);top:0;left:calc(var(--w) / 2 - var(--d) / 2);background:var(--rib),var(--s)}
+.lf{transform:rotateY(-90deg) translateZ(calc(var(--w) / 2))}
+.rt{transform:rotateY(90deg) translateZ(calc(var(--w) / 2))}
+.lf::after,.rt::after{content:'';position:absolute;left:50%;top:0;bottom:0;width:3px;background:rgba(0,0,0,.3)}
+.tp,.bt{left:0;width:var(--w);height:var(--d);top:calc(var(--h) / 2 - var(--d) / 2)}
+.tp{transform:rotateX(90deg) translateZ(calc(var(--h) / 2))}
+.bt{transform:rotateX(-90deg) translateZ(calc(var(--h) / 2))}
+.fw{position:absolute;left:0;top:0;width:var(--w);height:var(--h);transform-style:preserve-3d;transform:translateZ(calc(var(--d) / 2))}
+.dl,.dr{position:absolute;top:0;width:50%;height:100%;transform-style:preserve-3d;transition:transform .75s cubic-bezier(.3,1.25,.5,1)}
+.dl{left:0;transform-origin:left center}
+.dr{left:50%;transform-origin:right center}
+.open .dl{transform:rotateY(-122deg)}
+.open .dr{transform:rotateY(122deg)}
+.dl>i,.dr>i{position:absolute;inset:0;backface-visibility:hidden}
+.dl>.o,.dr>.o{background:var(--rib),var(--c);border:1px solid rgba(0,0,0,.2)}
+.dl>.o{box-shadow:inset -4px 0 0 rgba(0,0,0,.28)}
+.dr>.o{box-shadow:inset 4px 0 0 rgba(0,0,0,.28)}
+.dl>.n,.dr>.n{transform:rotateY(180deg);background:var(--s)}
+.lab{position:absolute;left:6%;top:7%;font:700 calc(var(--h) * var(--lf))/.84 var(--disp);letter-spacing:-.01em;text-transform:uppercase;color:#fff;transform:translateZ(1px);transition:opacity .3s}
+.tag{position:absolute;right:6%;bottom:6%;font:800 calc(var(--h) * .07)/1 var(--body);letter-spacing:.22em;color:#fff;transform:translateZ(1px);transition:opacity .3s}
+.open .lab,.open .tag{opacity:0}
+.hit{position:absolute;inset:0;padding:0;border:0;background:none;cursor:pointer;transform:translateZ(calc(var(--d) / 2 + 2px))}
+.hit:focus-visible{outline:3px solid #ffd23f;outline-offset:-14px}
+.open .hit{pointer-events:none}
+.in{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;padding:8% 9%;overflow:hidden;transform:translateZ(calc(var(--d) / -2 + 3px));background:repeating-linear-gradient(90deg,rgba(255,255,255,.035) 0 2px,transparent 2px 12px),linear-gradient(#10306a,#0a2250);font-size:calc(var(--h) * .068);color:#eaf4ff;opacity:0;transition:opacity .35s}
+.open .in{opacity:1;transition-delay:.35s}
+.box:not(.open) .in{pointer-events:none}
+.in h2{margin:0 0 .45em;font:700 2.1em/.95 var(--disp);letter-spacing:-.02em;color:#fff}
+.in h2:focus{outline:none}
+.in h2 em{font:italic 400 1.1em/1 var(--serif);color:color-mix(in srgb,var(--c) 70%,#fff)}
+.kick{margin:0 0 .6em;font:700 .72em/1 var(--body);letter-spacing:.2em;color:color-mix(in srgb,var(--c) 60%,#fff)}
+.in p{margin:0 0 .6em;line-height:1.45;color:#d9e6f5}
+.in ul{list-style:none;margin:0;padding:0}
+.in li{padding:.4em 0;border-top:1px solid rgba(255,255,255,.14);color:#d9e6f5}
+.in li b{color:#fff}
+.chips{display:flex;flex-wrap:wrap;gap:.45em}
+.chips span{padding:.45em .9em;border-radius:99px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.08);color:#fff;font-weight:600}
+.pb{display:inline-block;margin-top:.5em;padding:.7em 1.2em;border-radius:99px;background:var(--c);color:#fff;font:700 1em var(--disp);text-decoration:none}
+
+@media (max-width:700px){
+ nav{height:auto;flex-wrap:wrap;padding:12px 14px;row-gap:10px}
+ .logo{width:92px;font-size:24px}
+ .links{position:static;transform:none;order:3;width:100%;justify-content:center}
+ .talk{font-size:14px;padding:10px 14px}
+ #stage{--bw:min(38vw,170px);--k:2.4}
+ .box{--h:calc(var(--w) * .6);--d:calc(var(--w) * .56);--lf:.25}
+ .depot,.pill{display:none}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important}}
+</style>
+</head>
+<body>
+<nav>
+ <a class="logo" href="#" aria-label="Safae home">safae</a>
+ <div class="links">
+  <button type="button" data-go="1">Work</button><button type="button" data-go="2">About</button><button type="button" data-go="3">Process</button><button type="button" data-go="6">Contact</button>
+ </div>
+ <a class="talk" href="mailto:charyfsafae03@yahoo.com">Let’s Talk ↗</a>
+</nav>
+<main id="stage">
+ <div class="depot">SAFAE’S DEPOT · <b>7 CONTAINERS</b> · 2026</div>
+ <div class="word" aria-hidden="true">PORTFOLIO</div>
+ <div class="rail" aria-hidden="true"></div>
+ <div id="carriage" class="cl" aria-hidden="true"></div>
+ <div id="rod" class="cl" aria-hidden="true"></div>
+ <div id="grip" class="cl" aria-hidden="true"></div>
+ <div id="fing" class="cl" aria-hidden="true"><div class="fl"><i class="arm"></i><i class="fin"></i></div><div class="fr"><i class="arm"></i><i class="fin"></i></div></div>
+ <div class="pill" aria-hidden="true">PICK A CONTAINER ↓</div>
+</main>
+<script>
+const $=s=>document.querySelector(s);
+const stage=$('#stage'),CAR=$('#carriage'),ROD=$('#rod'),GRIP=$('#grip'),FING=$('#fing');
+const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const wait=ms=>new Promise(r=>setTimeout(r,REDUCE?0:ms));
+function chips(a){return '<div class="chips">'+a.map(x=>`<span>${x}</span>`).join('')+'</div>'}
+const DATA=[
+{n:'PORTFOLIO',c:'#e5322d',s:'#a91f1b',t:['PORT','FOLIO'],tag:'SAFAE',k:'01 / HELLO',h:'Hi, I’m <em>Safae.</em>',b:'<p>A marketing and communication master’s student, curious and creative, with experience in digital marketing, brand strategy and customer relations. Every container in the pile holds a piece of my work.</p>'},
+{n:'THE WORK',c:'#f26a1f',s:'#b84a10',t:['THE','WORK'],tag:'02',k:'02 / EXPERIENCE',h:'Where I’ve <em>worked.</em>',b:'<ul><li><b>Havas Media Network</b> · junior media officer, 2026–present</li><li><b>Sipsoni</b> · marketing consultant, 2024</li><li><b>The Borgen Project</b> · marketing and PR, 2025</li><li><b>Sports Direct</b> · sales assistant, 2023–2025</li></ul>'},
+{n:'ABOUT ME',c:'#1d55d8',s:'#123a9c',t:['ABOUT','ME'],tag:'03',k:'03 / ABOUT ME',h:'A little <em>about me.</em>',b:'<p>Curious and creative, I work across market research, brand identity and storytelling, go-to-market planning and online engagement. Based in Marseille and Aix-en-Provence.</p>'},
+{n:'PROCESS',c:'#f6b919',s:'#c08a0a',t:['PRO','CESS'],tag:'04',k:'04 / PROCESS',h:'How I <em>launch.</em>',b:'<ul><li><b>01 Research</b> · market study and competitor watch</li><li><b>02 Strategy</b> · branding and go-to-market plan</li><li><b>03 Create &amp; engage</b> · content and targeted campaigns</li></ul>'},
+{n:'TOOLKIT',c:'#97a1ad',s:'#6c7682',t:['TOOL','KIT'],tag:'05',k:'05 / TOOLKIT',h:'What’s in the <em>box.</em>',b:chips(['Excel','PowerPoint','Canva','Adobe','Procreate','Semrush','Google Analytics','SEO'])},
+{n:'WHAT I DO',c:'#e5322d',s:'#a91f1b',t:['WHAT','I DO'],tag:'06',k:'06 / WHAT I DO',h:'What I <em>do.</em>',b:chips(['Digital marketing','Brand strategy','Media planning','Content creation','Social &amp; display','Customer relations'])},
+{n:'SAY HELLO',c:'#2546b8',s:'#172f80',t:['SAY','HELLO'],tag:'07',k:'07 / SAY HELLO',h:'Got an <em>idea?</em>',b:'<p>Have a project in mind, a half-formed idea, or just want to say hi?</p><a class="pb" href="mailto:charyfsafae03@yahoo.com">charyfsafae03@yahoo.com ↗</a>'}
+];
+const PILE=[[.48,.66,-14,-24,6],[.13,.86,-16,28,16],[.36,.9,-12,-20,-10],[.6,.88,-14,24,12],[.86,.86,-16,-30,-14],[.25,.68,-14,30,-12],[.73,.68,-14,-26,16]];
+const PHONE=[[.5,.64],[.17,.91],[.5,.93],[.84,.9],[.2,.77],[.52,.79],[.82,.76]];
+const phone=()=>stage.clientWidth<=700;
+const sz=k=>{const W=stage.clientWidth,p=phone(),w=(p?Math.min(.38*W,170):Math.min(310,Math.max(200,.2*W)))*k;return{w,h:w*(p?.6:.43)}};
+const K=()=>phone()?2.4:1.95;
+const gt=(cy,h)=>cy-.7*h-26;
+
+const C=DATA.map((d,i)=>{
+ const el=document.createElement('div');
+ el.className='box';
+ el.style.setProperty('--c',d.c);el.style.setProperty('--s',d.s);
+ el.innerHTML=`<i class="fc bk"></i><i class="fc lf"></i><i class="fc rt"></i><i class="fc tp"></i><i class="fc bt"></i><div class="fw"><i class="dl"><i class="o"></i><i class="n"></i></i><i class="dr"><i class="o"></i><i class="n"></i></i><div class="lab">${d.t[0]}<br>${d.t[1]}</div><div class="tag">${d.tag}</div></div><div class="in"><div class="kick">${d.k}</div><h2 tabindex="-1">${d.h}</h2>${d.b}</div><button class="hit" type="button" aria-label="Open the ${d.n} container"></button>`;
+ stage.appendChild(el);
+ const inn=el.querySelector('.in');inn.inert=true;
+ el.querySelector('.hit').onclick=()=>pick(i);
+ return{el,inn,h2:el.querySelector('h2')};
+});
+
+function pile(i){const p=phone(),W=stage.clientWidth,H=stage.clientHeight,[x,y]=p?PHONE[i]:PILE[i];return{x:x*W,y:y*H,t:PILE[i].slice(2),z:10+Math.round(y*10)}}
+function setBox(i,x,y,t,held,dur,z){
+ const el=C[i].el;
+ el.style.setProperty('--dur',dur+'ms');
+ el.style.left=x+'px';el.style.top=y+'px';
+ el.style.setProperty('--rx',t[0]+'deg');el.style.setProperty('--ry',t[1]+'deg');el.style.setProperty('--rz',t[2]+'deg');
+ el.style.zIndex=held?50:z;
+ el.classList.toggle('held',held);
+}
+function clawTo(x,g,span,fl,dur){
+ const put=(el,o)=>{el.style.setProperty('--dur',dur+'ms');for(const k in o)el.style[k]=o[k]};
+ put(CAR,{left:x+'px'});
+ put(ROD,{left:x+'px',height:Math.max(0,g-81)+'px'});
+ put(GRIP,{left:x+'px',top:g+'px'});
+ put(FING,{left:x+'px',top:(g+26)+'px'});
+ FING.style.setProperty('--span',span+'px');
+ FING.style.setProperty('--fl',fl+'px');
+}
+function setOpen(o){FING.style.setProperty('--ao',o?'16deg':'0deg')}
+function setDoors(i,o){C[i].el.classList.toggle('open',o);C[i].inn.inert=!o}
+function lift(i,dur){
+ const W=stage.clientWidth,H=stage.clientHeight,L=sz(K()),cy=Math.max(H*.4,L.h/2+160);
+ setBox(i,W/2,cy,[-7,-11,0],true,dur,50);
+ clawTo(W/2,gt(cy,L.h),L.w*1.06,.6*L.h,dur);
+}
+
+let held=null,queue=null,busy=false;
+async function run(i){
+ if(held!==null){
+  const h0=held;setDoors(h0,false);await wait(450);
+  const p=pile(h0),s=sz(1);
+  setBox(h0,p.x,p.y,p.t,false,850,p.z);
+  clawTo(p.x,gt(p.y,s.h),s.w*1.06,.6*s.h,850);
+  await wait(850);setOpen(true);await wait(280);held=null;
+ }
+ const p=pile(i),s=sz(1);
+ clawTo(p.x,110,s.w*1.06,.6*s.h,750);await wait(750);
+ clawTo(p.x,gt(p.y,s.h),s.w*1.06,.6*s.h,560);await wait(560);
+ setOpen(false);await wait(240);
+ held=i;lift(i,950);await wait(950);
+ setDoors(i,true);await wait(750);
+ C[i].h2.focus({preventScroll:true});
+}
+async function pick(i){
+ if(i===held&&!busy)return;
+ queue=i;if(busy)return;busy=true;
+ while(queue!==null){const n=queue;queue=null;if(n!==held)await run(n);}
+ busy=false;
+}
+function layout(){
+ const W=stage.clientWidth;
+ C.forEach((_,i)=>{if(i!==held){const p=pile(i);setBox(i,p.x,p.y,p.t,false,0,p.z)}});
+ if(held!==null)lift(held,0);
+ else{const s=sz(1);clawTo(W/2,110,s.w*1.06,.6*s.h,0);setOpen(true);}
+}
+layout();
+addEventListener('resize',layout);
+document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>pick(+b.dataset.go)));
+addEventListener('keydown',e=>{if(e.key==='Escape')pick(0)});
+setTimeout(()=>pick(0),500);
+</script>
+</body>
+</html>
